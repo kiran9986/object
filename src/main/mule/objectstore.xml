@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="56b02132-5ce2-4406-85e1-89ad7d8d974a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="objectstoreFlow" doc:id="33de8843-07c8-4cc2-91c3-6409d6c9c81c" >
+		<http:listener doc:name="Listener" doc:id="cf62a829-c662-4896-ad25-e2d90d404db9" config-ref="HTTP_Listener_config" path="/store"/>
+		<set-variable value="#[attributes.queryParams.key]" doc:name="key " doc:id="9215b086-62fe-4916-b69a-f23605dab2a9" variableName="key"/>
+		<set-variable value="#[attributes.queryParams.value]" doc:name="value " doc:id="ebbf329b-010d-439c-980d-6f60ec55b1fc" variableName="value"/>
+		<os:store doc:name="Store" doc:id="e238a050-9e4d-47fc-a342-a187d48b4c25" key="#[vars.key]">
+			<os:value ><![CDATA[#[vars.value]]]></os:value>
+		</os:store>
+		<os:retrieve doc:name="Retrieve" doc:id="e00eab1d-7a37-4330-9504-56720f00dfe0" key="#[vars.key]">
+			<os:default-value ><![CDATA[#[vars.value]]]></os:default-value>
+		</os:retrieve>
+		<logger level="INFO" doc:name="Logger" doc:id="c9e04fdf-320d-48e4-8e6c-4b22f4ae2529" message="process end "/>
+	</flow>
+</mule>
